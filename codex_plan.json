@@ -1,0 +1,12 @@
+﻿{
+  "version": "0.1.0",
+  "tasks": [
+    {"id": "audit", "desc": "Audit repo; ensure .nojekyll", "status": "done"},
+    {"id": "hub", "desc": "Build index.html hub", "status": "done"},
+    {"id": "app", "desc": "Build belief_inventory.html (save/load/export/print + Google beta stub)", "status": "done"},
+    {"id": "docs", "desc": "README with Pages + Hostinger + Google setup + checklist", "status": "todo"},
+    {"id": "pages", "desc": "Enable GitHub Pages (main / root)", "status": "todo"},
+    {"id": "release", "desc": "Create v0.1.0 + ZIP asset", "status": "todo"},
+    {"id": "verify", "desc": "Run scripts/verify.ps1 (local + Pages)", "status": "todo"}
+  ]
+}
