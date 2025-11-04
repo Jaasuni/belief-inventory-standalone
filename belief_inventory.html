@@ -1,43 +1,94 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Belief Inventory</title>
-<style>
-  body{font:16px/1.5 system-ui;margin:2rem;max-width:900px}
-  textarea{width:100%;min-height:120px}
-  .row{margin:1rem 0}
-  button{padding:.6rem 1rem}
-</style>
-</head><body>
-<script>/* window.GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"; */</script>
-<h1>Belief Inventory</h1>
-<p>P1: dump beliefs ? P2: reframe. Works offline. Data stays in your browser.</p>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Belief Inventory</title>
+  <style>
+    :root{--w:900px}
+    body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:2rem;max-width:var(--w)}
+    .row{margin:1rem 0}
+    label{font-weight:600}
+    textarea{width:100%;min-height:140px;padding:.6rem;border:1px solid #ccc;border-radius:10px;resize:vertical}
+    button{padding:.6rem 1rem;border:1px solid #ccc;border-radius:10px;background:#fafafa;cursor:pointer}
+    button:focus, a:focus{outline:3px solid #4d90fe;outline-offset:3px}
+    .meta{opacity:.75}
+    .status{margin-top:.5rem;min-height:1.2em}
+    @media (prefers-color-scheme: dark){
+      body{background:#121212;color:#e6e6e6}
+      textarea{background:#1c1c1c;color:#e6e6e6;border-color:#333}
+      button{background:#1c1c1c;color:#e6e6e6;border-color:#333}
+    }
+  </style>
+</head>
+<body>
+  <!-- GOOGLE_CLIENT_ID hook (optional OAuth for Drive export) -->
+  <script>/* window.GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"; */</script>
 
-<div class="row"><label>Beliefs (P1)</label><textarea id="p1"></textarea></div>
-<div class="row"><label>Reframes (P2)</label><textarea id="p2"></textarea></div>
+  <h1>Belief Inventory</h1>
+  <p class="meta">P1: dump beliefs → P2: reframe. Works offline. Data stays in your browser.</p>
 
-<div class="row">
-  <button id="save">Save</button>
-  <button id="load">Load</button>
-  <button id="exportTxt">Export .txt</button>
-  <button id="print">Print / Save PDF</button>
-</div>
+  <div class="row">
+    <label for="p1">Beliefs (P1)</label>
+    <textarea id="p1" placeholder="List beliefs, phrases, assumptions..."></textarea>
+  </div>
+  <div class="row">
+    <label for="p2">Reframes (P2)</label>
+    <textarea id="p2" placeholder="Rewrite beliefs into aligned, useful statements..."></textarea>
+  </div>
 
-<script>
-const p1 = document.getElementById('p1');
-const p2 = document.getElementById('p2');
-const KEY = 'belief_inventory_v1';
+  <div class="row">
+    <button id="save" type="button">Save</button>
+    <button id="load" type="button">Load</button>
+    <button id="exportTxt" type="button">Export .txt</button>
+    <button id="printBtn" type="button">Print / Save PDF</button>
+  </div>
 
-document.getElementById('save').onclick = () => {
-  localStorage.setItem(KEY, JSON.stringify({ p1:p1.value, p2:p2.value }));
-  alert('Saved locally.');
-};
-document.getElementById('load').onclick = () => {
-  const d = JSON.parse(localStorage.getItem(KEY) || '{}');
-  p1.value = d.p1 || ''; p2.value = d.p2 || '';
-};
-document.getElementById('exportTxt').onclick = () => {
-  const blob = new Blob([Beliefs:\n\n\nReframes:\n\n], {type:'text/plain'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'belief-inventory.txt'; a.click();
-};
-document.getElementById('print').onclick = () => window.print();
-</script>
-</body></html>
+  <div id="status" class="status meta" aria-live="polite"></div>
+
+  <script>
+    const p1 = document.getElementById('p1');
+    const p2 = document.getElementById('p2');
+    const status = document.getElementById('status');
+    const KEY = 'belief_inventory_v1';
+
+    const say = m => status.textContent = m;
+    const fmt = t => new Date(t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+    document.getElementById('save').onclick = () => {
+      const now = Date.now();
+      localStorage.setItem(KEY, JSON.stringify({ p1: p1.value, p2: p2.value, t: now }));
+      say('Saved at ' + fmt(now) + '.');
+    };
+
+    document.getElementById('load').onclick = () => {
+      const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+      p1.value = d.p1 || '';
+      p2.value = d.p2 || '';
+      say(d.t ? ('Loaded previous save from ' + fmt(d.t) + '.') : 'Nothing saved yet.');
+    };
+
+    document.getElementById('exportTxt').onclick = () => {
+      const text = `Beliefs:\n${p1.value}\n\nReframes:\n${p2.value}\n`;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'belief-inventory.txt';
+      a.click();
+      say('Exported .txt for download.');
+    };
+
+    document.getElementById('printBtn').onclick = () => { window.print(); };
+
+    // Optional: autosave every 10s (comment out if not desired)
+    setInterval(() => {
+      try {
+        const now = Date.now();
+        localStorage.setItem(KEY, JSON.stringify({ p1: p1.value, p2: p2.value, t: now }));
+        say('Autosaved at ' + fmt(now) + '.');
+      } catch (_) {}
+    }, 10000);
+  </script>
+</body>
+</html>
+
