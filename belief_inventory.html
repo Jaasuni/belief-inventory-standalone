@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Belief Inventory</title>
+<style>
+  body{font:16px/1.5 system-ui;margin:2rem;max-width:900px}
+  textarea{width:100%;min-height:120px}
+  .row{margin:1rem 0}
+  button{padding:.6rem 1rem}
+</style>
+</head><body>
+<h1>Belief Inventory</h1>
+<p>P1: dump beliefs ? P2: reframe. Works offline. Data stays in your browser.</p>
+
+<div class="row"><label>Beliefs (P1)</label><textarea id="p1"></textarea></div>
+<div class="row"><label>Reframes (P2)</label><textarea id="p2"></textarea></div>
+
+<div class="row">
+  <button id="save">Save</button>
+  <button id="load">Load</button>
+  <button id="exportTxt">Export .txt</button>
+  <button id="print">Print / Save PDF</button>
+</div>
+
+<script>
+const p1 = document.getElementById('p1');
+const p2 = document.getElementById('p2');
+const KEY = 'belief_inventory_v1';
+
+document.getElementById('save').onclick = () => {
+  localStorage.setItem(KEY, JSON.stringify({ p1:p1.value, p2:p2.value }));
+  alert('Saved locally.');
+};
+document.getElementById('load').onclick = () => {
+  const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+  p1.value = d.p1 || ''; p2.value = d.p2 || '';
+};
+document.getElementById('exportTxt').onclick = () => {
+  const blob = new Blob([Beliefs:\n\n\nReframes:\n\n], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'belief-inventory.txt'; a.click();
+};
+document.getElementById('print').onclick = () => window.print();
+</script>
+</body></html>
