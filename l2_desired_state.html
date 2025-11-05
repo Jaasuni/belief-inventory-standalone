@@ -1,0 +1,28 @@
+﻿<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>L2 — Desired State</title></head>
+<body>
+<script>/* window.GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"; */</script>
+<p><a href="./index.html">← Back to Tools Hub</a></p>
+<h1 id="ws-title">L2 — Desired State</h1>
+<script>
+window.WORKSHEET = {
+  id: "l2_desired_state_v1",
+  title: "L2 — Desired State",
+  intro: "Define the desired way you think/feel/act so it passes your believability gate.",
+  sections: [
+    { title: "DESIRED STATE", fields: [
+      { id:"desired",  label:"Describe the desired state (present tense)", placeholder:"Present-tense, specific, observable…", count:true },
+      { id:"evidence", label:"What would be obvious evidence?",            placeholder:"What you would see/hear/do differently…", count:true }
+    ]}
+  ],
+  believability: { id:"bel", label:"Believability:", min:1, max:10, default:7, minPass:7, gateMsg:"If < 7, rewrite until it feels true enough to practice." },
+  exportName: "L2_desired_state.txt",
+  gdocTitlePrefix: "L2 Desired State"
+};
+document.getElementById('ws-title').textContent = window.WORKSHEET.title;
+</script>
+<div id="ws-root"></div>
+<script src="./worksheet.js"></script>
+</body>
+</html>
